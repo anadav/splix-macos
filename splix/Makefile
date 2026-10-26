@@ -198,9 +198,10 @@ DEPENDENCIES    := $(foreach lang,$(LANGUAGES),$(patsubst %.$(lang), %.d, \
                    $(filter %.$(lang),$(ALLSRC))))
 
 # Generate dependencies files for C++ source file
+# (without ARCHFLAGS: clang rejects -MM with more than one -arch)
 $(DEPDIR)/%.d: %.cpp
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CXXFLAGS) -MM -MP -MG -MT "\$$(DEPDIR)/$(basename $<).d \
+	@$(CXX) $(filter-out $(ARCHFLAGS),$(CXXFLAGS)) -MM -MP -MG -MT "\$$(DEPDIR)/$(basename $<).d \
 		\$$(BUILDDIR)/$(basename $<).o" -MG "$<" -MF $@
 
 # Load dependencies files 

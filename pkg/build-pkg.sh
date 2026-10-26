@@ -40,7 +40,7 @@ tar xzf jbigkit.tar.gz
 mkdir -p jbig/lib jbig/include
 (cd jbigkit-2.1/libjbig &&
     clang -O2 $ARCHFLAGS -c jbig85.c jbig_ar.c &&
-    ar crs "$WORK/jbig/lib/libjbig85.a" jbig85.o jbig_ar.o 2>/dev/null &&
+    libtool -static -o "$WORK/jbig/lib/libjbig85.a" jbig85.o jbig_ar.o &&
     cp jbig85.h jbig_ar.h "$WORK/jbig/include/")
 
 echo "==> 2/5 SpliX (rastertoqpdl universale)"
@@ -89,6 +89,10 @@ else
 fi
 
 echo "==> 5/5 Pacchetto"
+# pkgbuild on macOS 27 prints "write: Permission denied" 4 times; harmless.
+# PackageKit AFSC-compresses its temp package.bom, then a still-open BOM handle
+# flushes on dealloc and write(2) to the compressed file returns EPERM. The BOM
+# in the package is complete (lsbom matches mkbom of the root). Apple bug.
 pkgbuild --root "$ROOT" --install-location / \
     --identifier "$PKG_ID" --version "$PKG_VERSION" \
     --scripts "$HERE/scripts" \

@@ -219,7 +219,7 @@ PPDFile::Value& PPDFile::Value::setPreformatted()
     if (!str)
         return *this;
 
-    _preformatted = new char[strlen(str)];
+    _preformatted = new char[strlen(str) + 1];
     for (i=0; *str; str++) {
         if (*str == '<' && strlen(str) >= 3 && isxdigit(*(str+1))) {
             char temp[3] = {0, 0, 0};
@@ -231,6 +231,7 @@ PPDFile::Value& PPDFile::Value::setPreformatted()
                 _preformatted[i] = '<';
                 _preformatted[i+1] = temp[0];
                 i += 2;
+                str--;  // *str is not consumed yet; the loop's str++ would skip it
                 continue;
             }
             if (*str != '>') {

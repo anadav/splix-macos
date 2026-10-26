@@ -32,20 +32,25 @@ ifeq ($(ARCHI),Darwin)
 # macOS: niente cups.pc; le API raster/PPD stanno in libcups (SDK di sistema).
 # jbig85 da Homebrew, linkato staticamente per non dipendere da /opt/homebrew a runtime.
 # ARCHFLAGS: es. "-arch arm64 -arch x86_64 -mmacosx-version-min=11.0" per un binario universale.
+# Only the raster filter: macOS converts PDF to raster itself, pstoqpdl is unused.
+# -Werror: a new warning has to be looked at, not scroll by.
+TARGETS			:= rastertoqpdl
 JBIGDIR			?= /opt/homebrew/opt/jbigkit
 ARCHFLAGS		?= -arch arm64
-CXXFLAGS		+= $(ARCHFLAGS) `cups-config --cflags` -Iinclude -Wall -I$(JBIGDIR)/include -Wno-deprecated-declarations
+CXXFLAGS		+= $(ARCHFLAGS) `cups-config --cflags` -Iinclude -Wall -Werror -I$(JBIGDIR)/include
 LDFLAGS			+= $(ARCHFLAGS)
 CUPSLIBS		:= `cups-config --libs`
 JBIGLIB			:= $(JBIGDIR)/lib/libjbig85.a
+LIBDIRS			:=
 else
 CXXFLAGS		+= `pkg-config --cflags cups` -Iinclude -Wall -I/opt/local/include
 CUPSLIBS		:= `pkg-config --libs cups` -lcupsimage
 JBIGLIB			:= -ljbig85
+LIBDIRS			:= -L/opt/local/lib
 endif
 DEBUG_CXXFLAGS		+= -DDEBUG  -DDUMP_CACHE
 OPTIM_CXXFLAGS 		+= -g
-rastertoqpdl_LDFLAGS	:= $(LDFLAGS) -L/opt/local/lib
+rastertoqpdl_LDFLAGS	:= $(LDFLAGS) $(LIBDIRS)
 rastertoqpdl_LIBS	:= $(CUPSLIBS)
 pstoqpdl_LDFLAGS	:= $(LDFLAGS)
 pstoqpdl_LIBS		:= $(CUPSLIBS)

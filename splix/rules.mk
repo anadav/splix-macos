@@ -22,8 +22,10 @@ install: $(rastertoqpdl_TARGET) $(pstoqpdl_TARGET)
 	$(Q)mkdir -p $(DESTDIR)${CUPSFILTER}
 	$(call printCmd, $(cmd_install_raster))
 	$(Q)install -m 755 $(rastertoqpdl_TARGET) $(DESTDIR)${CUPSFILTER}
+ifneq ($(pstoqpdl_TARGET),)
 	$(call printCmd, $(cmd_install_ps))
 	$(Q)install -m 755 $(pstoqpdl_TARGET) $(DESTDIR)${CUPSFILTER}
+endif
 	$(Q)$(MAKE) --no-print-directory -C ppd install Q=$(Q) \
 		DESTDIR=$(abspath $(DESTDIR)) DISABLE_JBIG=$(DISABLE_JBIG)
 	@echo ""

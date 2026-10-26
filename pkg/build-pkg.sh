@@ -39,7 +39,7 @@ echo "$JBIG_SHA  jbigkit.tar.gz" | shasum -a 256 -c -
 tar xzf jbigkit.tar.gz
 mkdir -p jbig/lib jbig/include
 (cd jbigkit-2.1/libjbig &&
-    clang -O2 $ARCHFLAGS -c jbig85.c jbig_ar.c &&
+    clang -O2 -Wall -Werror $ARCHFLAGS -c jbig85.c jbig_ar.c &&
     libtool -static -o "$WORK/jbig/lib/libjbig85.a" jbig85.o jbig_ar.o &&
     cp jbig85.h jbig_ar.h "$WORK/jbig/include/")
 

@@ -24,6 +24,17 @@
 #include <ctype.h>
 #include "errlog.h"
 
+/*
+ * The whole PPD API (ppdOpenFile, ppdFindAttr, ...) is deprecated by CUPS and
+ * Apple, but a raster filter is handed a PPD file and has no replacement for
+ * reading it (cupsCopyDestInfo is a client-side API). Silence only that, and
+ * only in this file, which is the one place SpliX touches the PPD API.
+ */
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 
 /*

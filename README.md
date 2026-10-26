@@ -67,7 +67,8 @@ The script downloads and verifies jbigkit, builds a universal `rastertoqpdl`, ge
 
 The `splix/` folder is [OpenPrinting/splix @ 7a80218](https://github.com/OpenPrinting/splix/commit/7a80218) with these changes on top (see the git history):
 
-- `module.mk`: on macOS, use `cups-config` and link `libcups` only (the raster API lives in libcups and there is no `cups.pc`), link jbigkit statically, allow universal builds through `ARCHFLAGS`.
+- `module.mk`: on macOS, use `cups-config` and link `libcups` only (the raster API lives in libcups and there is no `cups.pc`), link jbigkit statically, allow universal builds through `ARCHFLAGS`. Build only `rastertoqpdl` (`pstoqpdl` is not shipped) and compile with `-Werror`.
+- `src/`: fix every compiler warning. `cache.cpp` toggled a `bool` with `~`, which always yields `true`, so the cache thread never alternated between preloading and storing pages; `document.cpp` uses `cupsRasterReadHeader2`; `compress.cpp` gets explicit braces in its band-width table; `ppdfile.cpp` silences the PPD-API deprecation in that file only (filters have no replacement API).
 - `Makefile`: generate dependency files without `ARCHFLAGS`, since clang rejects `-MM` with more than one `-arch`.
 - `ppd/spl2basic.defs`: remove the Ledger, A3 and B4 paper sizes. These printers go up to Legal and the firmware rejects bigger sizes.
 

@@ -47,7 +47,10 @@ echo "==> 2/5 SpliX (rastertoqpdl universale)"
 cd "$SPLIX"
 make clean >/dev/null 2>&1 || true
 make CC=clang CXX=clang++ JBIGDIR="$WORK/jbig" ARCHFLAGS="$ARCHFLAGS" >/dev/null
-lipo "$SPLIX/optimized/rastertoqpdl" -verify_arch arm64 x86_64
+# One arch per call: newer lipo rejects "-verify_arch arm64 x86_64".
+for arch in arm64 x86_64; do
+    lipo "$SPLIX/optimized/rastertoqpdl" -verify_arch "$arch"
+done
 
 echo "==> 3/5 PPD (tutti i modelli, da file .drv)"
 mkdir -p "$WORK/ppd"
